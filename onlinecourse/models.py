@@ -74,7 +74,9 @@ class Lesson(models.Model):
     order = models.IntegerField(default=0)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     content = models.TextField()
-
+    def __str__(self):
+        return "Name: " + self.title
+               
 
 # Enrollment model
 # <HINT> Once a user enrolled a class, an enrollment entry should be created between the user and course
@@ -114,11 +116,15 @@ class Question(models.Model):
            return True
        else:
            return False
+    def __str__(self):
+        return "Name: " + self.text
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     text = models.CharField(max_length=500)
     is_correct = models.BooleanField()
+    def __str__(self):
+        return "Choice: " + self.text
 
 #  <HINT> Create a Choice Model with:
     # Used to persist choice content for a question
