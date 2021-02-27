@@ -174,6 +174,7 @@ def extract_answers(request):
         # Calculate the total score
 def show_exam_result(request, course_id, submission_id):
     context = {}
+    context['submission'] = []
     all_points = 0
     score = 0
     course = Course.objects.get(pk=course_id)
@@ -184,9 +185,13 @@ def show_exam_result(request, course_id, submission_id):
         if ques.is_get_score(submission.choices.all()):
             score += ques.grade
     
-    grade = score/all_points * 100
+    grade = int(score/all_points * 100)
     context['grade'] = grade
     context['course'] = course
+
+    for sub in submission.choices.all():
+        context['submission'].append(int(str(sub)[-1]))
+        logger.info(str(sub)[-1])
 
     return render(request, 'onlinecourse/exam_result_bootstrap.html', context) 
 
