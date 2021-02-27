@@ -51,11 +51,12 @@
                         <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#lesson_{{lesson.id}}">Start Exam</button>
                         <div id="lesson_{{lesson.id}}" class="collapse">
                             <div class="card-columns-vertical">
-                            <form id="questionform" action="point to a submit view" method="post">
-                                {% for question in lesson.question_set.all%}
+                            <form id="questionform" action="{% url 'onlinecourse:submit' course.id %}" method="post">
+                            {% for question in lesson.question_set.all%}
                                 
                             <div class="card mt-1">
                                     <div class="card-header"><h5>{{question.text}}</h5></div>
+                                    {% csrf_token %}
                                     <div class="card-body">
                                         {% for choice in question.choice_set.all %}
                                             <div class="form-check">
@@ -70,6 +71,7 @@
                                 </div>
                             {% endfor %}
                         </div>
+                        
                         <input class="btn btn-success btn-block" type="submit" value="Submit">
                         </form>
                         {% endif %}

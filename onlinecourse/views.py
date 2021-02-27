@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 # <HINT> Import any new Models here
-from .models import Course, Enrollment, Submission
+from .models import Course, Enrollment, Submission, Lesson
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
@@ -142,14 +142,16 @@ def enroll(request, course_id):
          # Add each selected choice object to the submission object
          # Redirect to show_exam_result with the submission id
 def submit(request, course_id):
-    enrollment = Enrollment.objects.get_object_or_404(user=user, course=course_id)
-    submission = Submission.object.create(enrollment=enrollment)
-    logger.info("submission: " + submission.id)
+    logger.info("1")
+    user = request.user
+    enrollment = Enrollment.objects.get(user=user, course=course_id)
+    submission = Submission.objects.create(enrollment=enrollment)
+    logger.info("submission: " + str(submission.id))
     submitted_answer = extract_answers(request)
     for answer in submitted_answer:
-        submission.choice.add(answer)
+        submission.choices.add(answer)
 
-    return HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_results', args=(submission.id,)))
+    return HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_result', args=(course_id,submission.id,)))
 
 
 
@@ -171,7 +173,18 @@ def extract_answers(request):
         # For each selected choice, check if it is a correct answer or not
         # Calculate the total score
 def show_exam_result(request, course_id, submission_id):
-    return 1
+    context = {}
+    course = Course.objects.get(pk=course_id)
+    submission = Submission.objects.get(pk=submission_id)
+    lesson = Lesson.objects.get(course=course.id)
+    
+    
+    logger.info(str(submission.choices))
+    context['grade'] = 80
+    context['course'] = course
+
+    return render(request, 'onlinecourse/exam_result_bootstrap.html', context) 
+
 
 
 
